@@ -327,7 +327,8 @@
     document.querySelector('#replay').addEventListener('click', replaySignal);
     document.querySelector('#copy-code').addEventListener('click', async (event) => {
       const command = `sglang serve --model-path Qwen/Qwen3-8B --speculative-algorithm DSPINE --speculative-draft-model-path tencent/Qwen3-8B-DSpine-b16 --speculative-num-draft-tokens 16 --tp-size 1 --dtype bfloat16`;
-      try { await navigator.clipboard.writeText(command); event.currentTarget.textContent = 'Copied ✓'; setTimeout(() => event.currentTarget.textContent = 'Copy command', 1600); } catch { event.currentTarget.textContent = 'Select the command above'; }
+      const button = event.currentTarget;
+      try { await navigator.clipboard.writeText(command); button.textContent = 'Copied ✓'; setTimeout(() => button.textContent = 'Copy command', 1600); } catch { button.textContent = 'Select the command above'; }
     });
     const menu = document.querySelector('.menu-btn');
     menu.addEventListener('click', () => {
