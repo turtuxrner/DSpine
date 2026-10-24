@@ -19,7 +19,7 @@ parallel.
   <img src="asset/overview.png" alt="DSpine overview" width="90%">
 </p>
 
-> **Interactive research console** · A polished, dependency-free walkthrough of the DSpine pipeline is available at [`demo/index.html`](demo/index.html). Open it locally with `python -m http.server 4173 --directory demo`.
+> **Interactive research console** · [Open the live demo](https://turtuxrner.github.io/DSpine/) or browse the dependency-free source at [`demo/index.html`](demo/index.html). Run it locally with `python -m http.server 4173 --directory demo`.
 
 ## News
 
