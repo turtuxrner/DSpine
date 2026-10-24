@@ -19,6 +19,8 @@ parallel.
   <img src="asset/overview.png" alt="DSpine overview" width="90%">
 </p>
 
+> **Interactive research console** · A polished, dependency-free walkthrough of the DSpine pipeline is available at [`demo/index.html`](demo/index.html). Open it locally with `python -m http.server 4173 --directory demo`.
+
 ## News
 
 - **[2026-10]** Inference code and model weights released.
