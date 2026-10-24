@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#090d18" />
+  <meta name="description" content="DSpine — draft in parallel, condition through depth." />
+  <title>DSpine · Research Console</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #090d18;
+      --bg-soft: #0d1322;
+      --panel: rgba(17, 25, 42, .78);
+      --panel-strong: #121c2f;
+      --line: rgba(154, 174, 209, .16);
+      --line-bright: rgba(154, 174, 209, .28);
+      --text: #f4f7fb;
+      --muted: #95a2b8;
+      --subtle: #64738e;
+      --cyan: #53d8ff;
+      --green: #67e8ae;
+      --amber: #ffbd70;
+      --violet: #a58bff;
+      --shadow: 0 24px 80px rgba(0, 0, 0, .28);
+      --radius-lg: 28px;
+      --radius-md: 18px;
+      --radius-sm: 12px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 80% -10%, rgba(75, 114, 255, .20), transparent 30%),
+        radial-gradient(circle at 10% 14%, rgba(54, 211, 153, .10), transparent 28%),
+        var(--bg);
+      font: 15px/1.55 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: .01em;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .22;
+      background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: linear-gradient(to bottom, black, transparent 78%);
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button { color: inherit; font: inherit; }
+    .shell { width: min(1180px, calc(100% - 40px)); margin: 0 auto; }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 82px;
+      border-bottom: 1px solid var(--line);
+      position: relative;
+      z-index: 2;
+    }
+    .brand { display: inline-flex; align-items: center; gap: 11px; font-weight: 700; letter-spacing: -.03em; }
+    .brand-mark { width: 28px; height: 28px; position: relative; display: grid; place-items: center; }
+    .brand-mark::before, .brand-mark::after { content: ""; position: absolute; border-radius: 50%; }
+    .brand-mark::before { inset: 3px; border: 2px solid var(--cyan); border-right-color: transparent; transform: rotate(-34deg); }
+    .brand-mark::after { width: 8px; height: 8px; right: 0; top: 1px; background: var(--amber); box-shadow: -16px 22px 0 var(--green), -3px 26px 0 var(--violet); }
+    .brand span { font-size: 17px; }
+    .brand small { color: var(--subtle); font-weight: 500; letter-spacing: .08em; text-transform: uppercase; font-size: 10px; margin-left: 2px; }
+    .nav-links { display: flex; gap: 27px; color: var(--muted); font-size: 13px; }
+    .nav-links a { transition: color .2s ease; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-actions { display: flex; align-items: center; gap: 10px; }
+    .icon-btn, .menu-btn { display: grid; place-items: center; width: 38px; height: 38px; border: 1px solid var(--line); background: rgba(255,255,255,.025); border-radius: 50%; cursor: pointer; }
+    .menu-btn { display: none; border-radius: 10px; }
+    .icon-btn:hover, .menu-btn:hover { border-color: var(--line-bright); background: rgba(255,255,255,.07); }
+    .icon-btn svg, .menu-btn svg { width: 16px; height: 16px; }
+
+    .hero { display: grid; grid-template-columns: 1.08fr .92fr; gap: 54px; align-items: center; min-height: 640px; padding: 88px 0 76px; }
+    .eyebrow { color: var(--cyan); font-size: 11px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 9px; }
+    .eyebrow::before { content: ""; width: 24px; height: 1px; background: currentColor; }
+    h1 { font-size: clamp(46px, 6vw, 78px); line-height: .99; letter-spacing: -.07em; max-width: 680px; margin: 22px 0 25px; }
+    h1 em { color: var(--cyan); font-style: normal; }
+    .hero-copy { color: var(--muted); font-size: 17px; line-height: 1.7; max-width: 580px; }
+    .hero-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-height: 46px; padding: 0 17px; border-radius: 11px; border: 1px solid var(--line-bright); font-size: 13px; font-weight: 700; transition: transform .2s ease, background .2s ease, border-color .2s ease; }
+    .btn:hover { transform: translateY(-2px); border-color: rgba(255,255,255,.42); }
+    .btn-primary { background: var(--text); color: #0b1120; border-color: var(--text); }
+    .btn-primary:hover { background: #dff8ff; }
+    .btn-quiet { background: rgba(255,255,255,.045); color: var(--text); }
+    .btn svg { width: 15px; height: 15px; }
+    .hero-meta { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 24px; color: var(--subtle); font-size: 12px; }
+    .hero-meta strong { color: var(--text); font-weight: 600; }
+
+    .orbital { position: relative; aspect-ratio: 1 / .9; min-height: 390px; display: grid; place-items: center; }
+    .orbital::before { content: ""; position: absolute; width: 70%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(83,216,255,.15), rgba(83,216,255,.025) 48%, transparent 69%); filter: blur(2px); }
+    .ring { position: absolute; border: 1px solid rgba(128, 161, 215, .22); border-radius: 50%; transform: rotate(-17deg); }
+    .ring.r1 { width: 78%; height: 44%; }
+    .ring.r2 { width: 72%; height: 72%; transform: rotate(36deg); border-color: rgba(103,232,174,.19); }
+    .ring.r3 { width: 45%; height: 82%; transform: rotate(77deg); border-color: rgba(165,139,255,.15); }
+    .orbit-line { position: absolute; width: 100%; height: 1px; background: linear-gradient(90deg, transparent, rgba(83,216,255,.45), transparent); transform: rotate(-20deg); }
+    .core { position: relative; z-index: 1; width: 165px; height: 165px; border-radius: 50%; display: grid; place-items: center; background: radial-gradient(circle at 34% 28%, #223d64, #10192c 62%); border: 1px solid rgba(143, 210, 255, .45); box-shadow: 0 0 0 14px rgba(83,216,255,.035), 0 0 75px rgba(83,216,255,.27), inset 0 0 40px rgba(83,216,255,.11); }
+    .core-inner { width: 92px; height: 92px; border-radius: 50%; border: 1px dashed rgba(255,255,255,.42); display: grid; place-items: center; color: var(--cyan); font: 700 15px/1 JetBrains Mono, monospace; }
+    .node { position: absolute; z-index: 2; padding: 8px 11px; border: 1px solid var(--line-bright); border-radius: 9px; background: rgba(14, 23, 40, .88); color: var(--muted); font: 11px JetBrains Mono, monospace; box-shadow: var(--shadow); }
+    .node strong { display: block; color: var(--text); font: 600 12px Inter, sans-serif; margin-bottom: 2px; }
+    .node.n1 { top: 16%; left: 4%; } .node.n2 { top: 4%; right: 12%; } .node.n3 { bottom: 12%; right: 3%; } .node.n4 { bottom: 3%; left: 19%; }
+    .pulse { position: absolute; width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 0 rgba(103,232,174,.7); animation: pulse 2.4s infinite; }
+    .pulse.p1 { left: 18%; top: 27%; } .pulse.p2 { right: 23%; top: 20%; animation-delay: .7s; } .pulse.p3 { right: 11%; bottom: 26%; animation-delay: 1.2s; }
+    @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(103,232,174,.55); opacity: .85; } 50% { box-shadow: 0 0 0 13px rgba(103,232,174,0); opacity: 1; } }
+
+    .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; margin-bottom: 90px; }
+    .stat { min-height: 138px; padding: 22px; border: 1px solid var(--line); border-radius: var(--radius-md); background: linear-gradient(145deg, rgba(24,35,57,.82), rgba(13,19,32,.62)); position: relative; overflow: hidden; }
+    .stat::after { content: ""; position: absolute; width: 90px; height: 90px; right: -30px; bottom: -46px; border-radius: 50%; background: var(--accent, var(--cyan)); opacity: .1; filter: blur(3px); }
+    .stat-label { color: var(--muted); font-size: 12px; }
+    .stat-value { font-size: 36px; font-weight: 700; line-height: 1; letter-spacing: -.06em; margin: 20px 0 8px; }
+    .stat-note { color: var(--subtle); font-size: 12px; }
+    .section { padding: 0 0 100px; }
+    .section-head { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 26px; }
+    .kicker { color: var(--subtle); font: 11px JetBrains Mono, monospace; letter-spacing: .12em; text-transform: uppercase; }
+    h2 { font-size: clamp(29px, 3.8vw, 46px); letter-spacing: -.06em; line-height: 1.05; margin: 9px 0 0; }
+    .section-intro { max-width: 410px; color: var(--muted); font-size: 14px; line-height: 1.65; }
+    .panel { border: 1px solid var(--line); border-radius: var(--radius-lg); background: linear-gradient(145deg, rgba(18,29,49,.83), rgba(10,16,28,.76)); box-shadow: var(--shadow); }
+
+    .bench-panel { padding: 26px; }
+    .tabs { display: flex; gap: 7px; flex-wrap: wrap; }
+    .tab { cursor: pointer; border: 1px solid var(--line); background: rgba(255,255,255,.025); color: var(--muted); border-radius: 8px; padding: 8px 11px; font-size: 12px; }
+    .tab[aria-selected="true"] { color: var(--text); border-color: rgba(83,216,255,.6); background: rgba(83,216,255,.10); }
+    .chart { margin-top: 30px; display: grid; gap: 17px; }
+    .chart-row { display: grid; grid-template-columns: 102px 1fr 52px; align-items: center; gap: 13px; }
+    .chart-label { color: var(--muted); font-size: 12px; }
+    .chart-track { height: 11px; border-radius: 20px; background: rgba(255,255,255,.07); overflow: hidden; }
+    .chart-bar { height: 100%; width: var(--width); border-radius: inherit; background: linear-gradient(90deg, rgba(83,216,255,.55), var(--cyan)); transition: width .7s cubic-bezier(.2,.8,.2,1); }
+    .chart-value { color: var(--text); font: 600 12px JetBrains Mono, monospace; text-align: right; }
+    .chart-legend { display: flex; gap: 18px; margin-top: 24px; color: var(--subtle); font-size: 11px; }
+    .legend-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; background: var(--cyan); }
+    .legend-dot.green { background: var(--green); }
+    .chart-foot { display: flex; justify-content: space-between; gap: 16px; margin-top: 25px; padding-top: 17px; border-top: 1px solid var(--line); color: var(--subtle); font-size: 11px; }
+
+    .mechanics { display: grid; grid-template-columns: 1.1fr .9fr; gap: 14px; }
+    .mechanics-panel { padding: 27px; min-height: 470px; }
+    .panel-title { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+    .panel-title h3 { margin: 0; font-size: 17px; letter-spacing: -.03em; }
+    .status { display: inline-flex; align-items: center; gap: 6px; color: var(--green); font-size: 11px; }
+    .status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 12px currentColor; }
+    .layer-grid { display: grid; grid-template-columns: 74px repeat(5, 1fr); gap: 7px; margin-top: 30px; align-items: center; }
+    .layer-label { color: var(--subtle); font: 10px JetBrains Mono, monospace; }
+    .layer-head { color: var(--subtle); font: 10px JetBrains Mono, monospace; text-align: center; }
+    .cell { height: 45px; display: grid; place-items: center; border: 1px solid rgba(83,216,255,.15); border-radius: 9px; background: rgba(83,216,255,.055); color: rgba(220,244,255,.74); font: 11px JetBrains Mono, monospace; transition: transform .25s ease, background .25s ease, border-color .25s ease; }
+    .cell.active { background: linear-gradient(135deg, rgba(83,216,255,.30), rgba(103,232,174,.17)); border-color: rgba(83,216,255,.72); color: white; box-shadow: 0 0 22px rgba(83,216,255,.11); transform: translateY(-2px); }
+    .cell.gate { border-color: rgba(255,189,112,.45); background: rgba(255,189,112,.09); color: var(--amber); }
+    .mechanic-copy { color: var(--muted); font-size: 13px; margin: 26px 0 0; max-width: 510px; }
+    .stepper { display: grid; gap: 15px; margin-top: 28px; }
+    .step { display: grid; grid-template-columns: 31px 1fr; gap: 12px; align-items: start; }
+    .step-index { width: 28px; height: 28px; border: 1px solid var(--line-bright); border-radius: 9px; display: grid; place-items: center; color: var(--cyan); font: 11px JetBrains Mono, monospace; }
+    .step strong { display: block; font-size: 13px; margin-bottom: 2px; }
+    .step span { color: var(--muted); font-size: 12px; line-height: 1.5; }
+
+    .code-panel { display: grid; grid-template-columns: .85fr 1.15fr; gap: 15px; }
+    .code-copy { padding: 30px; display: flex; flex-direction: column; justify-content: center; }
+    .code-copy p { color: var(--muted); font-size: 14px; line-height: 1.7; max-width: 410px; }
+    .code-block { margin: 0; padding: 28px; overflow: auto; min-height: 250px; border-radius: var(--radius-lg); background: #080d17; border: 1px solid rgba(145,167,206,.15); color: #c8d6ed; font: 12px/1.8 JetBrains Mono, ui-monospace, monospace; }
+    .code-comment { color: #5c6b84; } .code-key { color: #7bdcff; } .code-value { color: #a9e8bb; } .code-flag { color: #ffc883; }
+    .copy-code { align-self: flex-start; margin-top: 16px; background: rgba(255,255,255,.06); }
+
+    footer { border-top: 1px solid var(--line); padding: 24px 0 40px; color: var(--subtle); font-size: 12px; display: flex; justify-content: space-between; gap: 15px; }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--text); }
+    .reveal { opacity: 0; transform: translateY(16px); animation: reveal .7s ease forwards; }
+    .delay-1 { animation-delay: .08s; } .delay-2 { animation-delay: .16s; } .delay-3 { animation-delay: .24s; }
+    @keyframes reveal { to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 860px) {
+      .nav-links { display: none; }
+      .menu-btn { display: grid; }
+      .hero { grid-template-columns: 1fr; gap: 18px; padding-top: 65px; }
+      .orbital { min-height: 330px; order: -1; }
+      .stat-grid, .mechanics, .code-panel { grid-template-columns: 1fr; }
+      .stat-grid { margin-bottom: 70px; }
+      .code-block { min-height: 0; }
+    }
+    @media (max-width: 530px) {
+      .shell { width: min(100% - 28px, 1180px); }
+      .nav { height: 70px; }
+      .brand small { display: none; }
+      h1 { font-size: 48px; }
+      .hero { padding: 53px 0 58px; min-height: 0; }
+      .orbital { min-height: 275px; transform: scale(.86); margin: -20px 0; }
+      .stat-grid { gap: 9px; }
+      .stat { min-height: 116px; padding: 17px; }
+      .stat-value { font-size: 30px; margin-top: 15px; }
+      .panel, .mechanics-panel { border-radius: 20px; }
+      .bench-panel, .mechanics-panel, .code-copy { padding: 20px; }
+      .section { padding-bottom: 70px; }
+      .section-head { display: block; }
+      .section-intro { margin-top: 17px; }
+      .chart-row { grid-template-columns: 78px 1fr 44px; gap: 8px; }
+      .layer-grid { grid-template-columns: 60px repeat(5, 1fr); gap: 5px; }
+      .cell { height: 36px; font-size: 10px; }
+      .chart-foot { display: block; } .chart-foot span { display: block; margin-top: 5px; }
+      footer { display: block; } footer span { display: block; margin-top: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="shell nav">
+    <a class="brand" href="#top" aria-label="DSpine home">
+      <span class="brand-mark" aria-hidden="true"></span><span>DSpine</span><small>research console</small>
+    </a>
+    <nav class="nav-links" aria-label="Primary navigation">
+      <a href="#benchmarks">Benchmarks</a><a href="#mechanics">Mechanics</a><a href="#quickstart">Quick start</a>
+    </nav>
+    <div class="nav-actions">
+      <a class="icon-btn" href="https://github.com/turtuxrner/DSpine" aria-label="Open GitHub repository" title="GitHub repository">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 19c-4 1.3-4-2-5.5-2m11 4v-3.5c0-1 .1-1.4-.5-2 1.7-.2 3.5-.8 3.5-4A3.1 3.1 0 0 0 17 9c.3-.8.3-1.6 0-2.4 0 0-1 0-2.5 1a8.5 8.5 0 0 0-5 0C8 6.6 7 6.6 7 6.6A3.1 3.1 0 0 0 7 9a3.1 3.1 0 0 0-.5 2.5c0 3.2 1.8 3.8 3.5 4-.5.5-.5 1-.5 2V21"/><path d="M8 21c-4 .9-4-2-5-2"/></svg>
+      </a>
+      <button class="menu-btn" aria-label="Toggle navigation" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="top" class="shell">
+    <section class="hero">
+      <div class="reveal">
+        <div class="eyebrow">Speculative decoding · 2026</div>
+        <h1>Draft in parallel.<br><em>Keep the chain.</em></h1>
+        <p class="hero-copy">DSpine carries each predecessor’s prediction through network depth, so every position drafts together while the causal signal arrives early enough to matter.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#quickstart">Run DSpine <span aria-hidden="true">↗</span></a>
+          <a class="btn btn-quiet" href="https://arxiv.org/abs/2609.36173">Read the paper <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="hero-meta"><span><strong>Qwen3-8B</strong> target</span><span><strong>16</strong> draft tokens</span><span><strong>SGLang 0.5.20</strong> runtime</span></div>
+      </div>
+      <div class="orbital reveal delay-2" aria-label="DSpine causal depth visualization">
+        <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div><div class="orbit-line"></div>
+        <div class="core"><div class="core-inner">D·SPINE</div></div>
+        <div class="node n1"><strong>layer 01</strong>signal enters</div><div class="node n2"><strong>layer 03</strong>gate writes</div><div class="node n3"><strong>layer L</strong>tokens resolve</div><div class="node n4"><strong>decode</strong>K × K lookup</div>
+        <i class="pulse p1"></i><i class="pulse p2"></i><i class="pulse p3"></i>
+      </div>
+    </section>
+
+    <section class="stat-grid reveal delay-3" aria-label="Headline results">
+      <article class="stat" style="--accent:var(--cyan)"><div class="stat-label">Throughput over DFlash</div><div class="stat-value">+23.3%</div><div class="stat-note">Qwen3-8B · average across 40 settings</div></article>
+      <article class="stat" style="--accent:var(--green)"><div class="stat-label">Mean acceptance length</div><div class="stat-value">4.82</div><div class="stat-note">Seven benchmarks · temperature 0</div></article>
+      <article class="stat" style="--accent:var(--amber)"><div class="stat-label">Injection overhead</div><div class="stat-value">0.15<span style="font-size:.45em;letter-spacing:-.01em"> ms</span></div><div class="stat-note">Per draft round · fused path</div></article>
+    </section>
+
+    <section class="section" id="benchmarks">
+      <div class="section-head"><div><div class="kicker">01 / benchmarks</div><h2>Acceptance, at a glance.</h2></div><p class="section-intro">DSpine leads the strongest baseline across math, code, and chat workloads. Switch temperature to inspect the reported snapshot.</p></div>
+      <div class="panel bench-panel">
+        <div class="section-head" style="margin-bottom:0"><div><div class="kicker">Qwen3-8B · acceptance length τ</div><p style="margin:8px 0 0;color:var(--muted);font-size:13px">DSpine compared with DFlash2</p></div><div class="tabs" role="tablist" aria-label="Temperature"><button class="tab" role="tab" aria-selected="true" data-temp="0">T = 0</button><button class="tab" role="tab" aria-selected="false" data-temp="1">T = 1</button></div></div>
+        <div class="chart" id="benchmark-chart" role="img" aria-label="Acceptance length chart"></div>
+        <div class="chart-legend"><span><i class="legend-dot"></i>DSpine</span><span><i class="legend-dot green"></i>DFlash2 baseline</span></div>
+        <div class="chart-foot"><span>Source: retrained on Open-PerfectBlend with the same configuration.</span><span>DSpine mean: <strong id="mean-value" style="color:var(--text)">4.82</strong></span></div>
+      </div>
+    </section>
+
+    <section class="section" id="mechanics">
+      <div class="section-head"><div><div class="kicker">02 / mechanics</div><h2>One signal. Every layer.</h2></div><p class="section-intro">The predecessor’s predicted feature is transferred in a unified embedding space, then refreshed after decoding.</p></div>
+      <div class="mechanics">
+        <article class="panel mechanics-panel">
+          <div class="panel-title"><h3>Adjacent causal injection</h3><span class="status">live trace</span></div>
+          <div class="layer-grid" id="layer-grid" aria-label="Layer-wise token signal matrix"></div>
+          <p class="mechanic-copy">All positions update in parallel. The dependency chain unfolds over depth: each column receives a gated message from its immediate predecessor before the next layer.</p>
+          <button class="btn btn-quiet" id="replay" style="margin-top:23px">Replay signal <span aria-hidden="true">↻</span></button>
+        </article>
+        <article class="panel mechanics-panel">
+          <div class="panel-title"><h3>How a round resolves</h3><span class="kicker">3 steps</span></div>
+          <div class="stepper"><div class="step"><div class="step-index">01</div><div><strong>Predict</strong><span>Every draft position emits a feature in the target model’s output space.</span></div></div><div class="step"><div class="step-index">02</div><div><strong>Inject</strong><span>A gated adjacent message conditions the successor at every layer.</span></div></div><div class="step"><div class="step-index">03</div><div><strong>Decode</strong><span>Transition-cached K × K scores turn predecessor conditioning into a lookup.</span></div></div></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="quickstart">
+      <div class="section-head"><div><div class="kicker">03 / quick start</div><h2>Drop into SGLang.</h2></div><p class="section-intro">Install the plugin, point it at the target and DSpine draft checkpoints, then serve with one command.</p></div>
+      <div class="panel code-panel">
+        <div class="code-copy"><div class="kicker">inference command</div><p>Python 3.10+, CUDA, and SGLang 0.5.20 are the supported baseline for the current release.</p><a class="btn btn-primary" href="https://github.com/turtuxrner/DSpine#installation">View repository <span aria-hidden="true">↗</span></a></div>
+        <div><pre class="code-block" id="code"><span class="code-comment"># serve Qwen3-8B with the DSpine drafter</span>
+<span class="code-key">sglang</span> serve \
+  <span class="code-flag">--model-path</span> Qwen/Qwen3-8B \
+  <span class="code-flag">--speculative-algorithm</span> DSPINE \
+  <span class="code-flag">--speculative-draft-model-path</span> \
+    <span class="code-value">tencent/Qwen3-8B-DSpine-b16</span> \
+  <span class="code-flag">--speculative-num-draft-tokens</span> 16 \
+  <span class="code-flag">--tp-size</span> 1 \
+  <span class="code-flag">--dtype</span> bfloat16</pre><button class="btn copy-code" id="copy-code">Copy command</button></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="shell"><span>© 2026 DSpine · Apache 2.0</span><span><a href="https://github.com/tencent/dspine">Upstream</a> · <a href="https://huggingface.co/collections/tencent/dspine">Hugging Face</a> · <a href="https://arxiv.org/abs/2609.36173">arXiv</a></span></footer>
+
+  <script>
+    const benchmarkData = {
+      0: [['GSM8K', 5.67, 5.03], ['MATH-500', 5.49, 5.10], ['HumanEval', 4.94, 4.43], ['MBPP', 4.98, 4.52], ['LCB', 4.46, 4.09], ['MT-Bench', 4.11, 3.71], ['Arena-Hard', 4.12, 3.82]],
+      1: [['GSM8K', 5.31, 4.56], ['MATH-500', 5.05, 4.47], ['HumanEval', 4.63, 4.04], ['MBPP', 4.61, 4.06], ['LCB', 3.91, 3.50], ['MT-Bench', 3.79, 3.35], ['Arena-Hard', 3.62, 3.29]]
+    };
+    const chart = document.querySelector('#benchmark-chart');
+    const mean = document.querySelector('#mean-value');
+    function renderChart(temp = 0) {
+      const rows = benchmarkData[temp];
+      const max = 6;
+      chart.innerHTML = rows.map(([label, spine, baseline]) => `<div class="chart-row"><span class="chart-label">${label}</span><div class="chart-track"><div class="chart-bar" style="--width:${spine / max * 100}%" title="DSpine ${spine}"></div></div><span class="chart-value">${spine.toFixed(2)}</span></div>`).join('');
+      mean.textContent = (rows.reduce((sum, row) => sum + row[1], 0) / rows.length).toFixed(2);
+      document.querySelectorAll('.tab').forEach(tab => tab.setAttribute('aria-selected', tab.dataset.temp === String(temp)));
+    }
+    document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => renderChart(tab.dataset.temp)));
+    renderChart();
+
+    const layerGrid = document.querySelector('#layer-grid');
+    const tokens = ['x₀', 'x₁', 'x₂', 'x₃', 'x₄'];
+    const layers = ['input', 'L1', 'L2', 'L3', 'L4', 'L5'];
+    layerGrid.innerHTML = '<span></span>' + tokens.map(token => `<span class="layer-head">${token}</span>`).join('') + layers.map((layer, row) => `<span class="layer-label">${layer}</span>${tokens.map((_, col) => `<span class="cell ${row > 0 && col <= row - 1 ? 'active' : ''} ${row === 3 && col === 2 ? 'gate' : ''}" data-row="${row}" data-col="${col}">${row === 0 ? '·' : row === 3 && col === 2 ? 'gate' : '·'}</span>`).join('')}`).join('');
+    function replaySignal() {
+      document.querySelectorAll('.cell').forEach(cell => cell.classList.remove('active'));
+      const cells = [...document.querySelectorAll('.cell')];
+      cells.forEach((cell, index) => setTimeout(() => cell.classList.add('active'), (Number(cell.dataset.row) * 5 + Number(cell.dataset.col)) * 75));
+    }
+    document.querySelector('#replay').addEventListener('click', replaySignal);
+    document.querySelector('#copy-code').addEventListener('click', async (event) => {
+      const command = `sglang serve --model-path Qwen/Qwen3-8B --speculative-algorithm DSPINE --speculative-draft-model-path tencent/Qwen3-8B-DSpine-b16 --speculative-num-draft-tokens 16 --tp-size 1 --dtype bfloat16`;
+      try { await navigator.clipboard.writeText(command); event.currentTarget.textContent = 'Copied ✓'; setTimeout(() => event.currentTarget.textContent = 'Copy command', 1600); } catch { event.currentTarget.textContent = 'Select the command above'; }
+    });
+    const menu = document.querySelector('.menu-btn');
+    menu.addEventListener('click', () => {
+      const links = document.querySelector('.nav-links');
+      const open = menu.getAttribute('aria-expanded') === 'true';
+      menu.setAttribute('aria-expanded', String(!open));
+      links.style.display = open ? '' : 'flex';
+      links.style.position = 'absolute'; links.style.top = '70px'; links.style.right = '14px'; links.style.padding = '12px'; links.style.flexDirection = 'column'; links.style.background = 'var(--panel-strong)'; links.style.border = '1px solid var(--line)'; links.style.borderRadius = '13px';
+    });
+  </script>
+</body>
+</html>
