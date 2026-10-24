@@ -134,8 +134,10 @@
     .chart { margin-top: 30px; display: grid; gap: 17px; }
     .chart-row { display: grid; grid-template-columns: 102px 1fr 52px; align-items: center; gap: 13px; }
     .chart-label { color: var(--muted); font-size: 12px; }
-    .chart-track { height: 11px; border-radius: 20px; background: rgba(255,255,255,.07); overflow: hidden; }
+    .chart-bars { display: grid; gap: 4px; }
+    .chart-track { height: 7px; border-radius: 20px; background: rgba(255,255,255,.07); overflow: hidden; }
     .chart-bar { height: 100%; width: var(--width); border-radius: inherit; background: linear-gradient(90deg, rgba(83,216,255,.55), var(--cyan)); transition: width .7s cubic-bezier(.2,.8,.2,1); }
+    .chart-bar.baseline { background: linear-gradient(90deg, rgba(103,232,174,.34), var(--green)); }
     .chart-value { color: var(--text); font: 600 12px JetBrains Mono, monospace; text-align: right; }
     .chart-legend { display: flex; gap: 18px; margin-top: 24px; color: var(--subtle); font-size: 11px; }
     .legend-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; background: var(--cyan); }
@@ -306,7 +308,7 @@
     function renderChart(temp = 0) {
       const rows = benchmarkData[temp];
       const max = 6;
-      chart.innerHTML = rows.map(([label, spine, baseline]) => `<div class="chart-row"><span class="chart-label">${label}</span><div class="chart-track"><div class="chart-bar" style="--width:${spine / max * 100}%" title="DSpine ${spine}"></div></div><span class="chart-value">${spine.toFixed(2)}</span></div>`).join('');
+      chart.innerHTML = rows.map(([label, spine, baseline]) => `<div class="chart-row"><span class="chart-label">${label}</span><div class="chart-bars"><div class="chart-track"><div class="chart-bar baseline" style="--width:${baseline / max * 100}%" title="DFlash2 ${baseline}"></div></div><div class="chart-track"><div class="chart-bar" style="--width:${spine / max * 100}%" title="DSpine ${spine}"></div></div></div><span class="chart-value">${spine.toFixed(2)}</span></div>`).join('');
       mean.textContent = (rows.reduce((sum, row) => sum + row[1], 0) / rows.length).toFixed(2);
       document.querySelectorAll('.tab').forEach(tab => tab.setAttribute('aria-selected', tab.dataset.temp === String(temp)));
     }
